@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="description" content="Módulos GPS y Cámara — Proyecto Universitario" />
+  <link rel="manifest" href="manifest.json" />
+  <title>ModuleApp — GPS & Cámara</title>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Notificación flotante -->
+  <div id="toast"></div>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="logo">
+      <div class="logo-pulse"></div>
+      ModuleApp
+    </div>
+    <div class="net-badge">
+      <div class="net-dot" id="net-dot"></div>
+      <span id="net-txt">Verificando...</span>
+    </div>
+  </header>
+
+  <!-- ── TABS ── -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('gps', this)"> GPS</button>
+    <button class="tab"        onclick="switchTab('cam', this)"> Cámara</button>
+  </div>
+
+  <div class="panel active" id="panel-gps">
+    <div class="layout">
+
+      <!-- Tarjeta principal GPS -->
+      <div class="card">
+        <div class="card-title">
+          Módulo GPS
+          <span class="status-pill pill-idle" id="gps-pill">Inactivo</span>
+        </div>
+
+        <!-- Mapa -->
+        <div id="map-wrap">
+          <span></span>
+          <span>Presiona "Obtener ubicación"</span>
+        </div>
+
+        <!-- Datos -->
+        <div class="data-row">
+          <span class="data-key">Latitud</span>
+          <span class="data-val accent" id="gps-lat">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Longitud</span>
+          <span class="data-val accent" id="gps-lng">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Altitud</span>
+          <span class="data-val" id="gps-alt">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Precisión</span>
+          <span class="data-val blue" id="gps-acc">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Velocidad</span>
+          <span class="data-val" id="gps-spd">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Rumbo</span>
+          <span class="data-val" id="gps-head">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Timestamp</span>
+          <span class="data-val" id="gps-ts" style="font-size:.72rem">—</span>
+        </div>
+
+        <!-- Botones -->
+        <div class="btn-row">
+          <button class="btn btn-red"   onclick="getGPS()"> Obtener ubicación</button>
+          <button class="btn btn-green" onclick="toggleWatch()" id="btn-watch"> Seguimiento</button>
+        </div>
+      </div>
+
+      <!-- Log GPS -->
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Log de lecturas</div>
+        <div class="log" id="gps-log">
+          <div class="le">
+            <span class="lt">--:--:--</span>
+            <span class="lm-info">Esperando GPS...</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel" id="panel-cam">
+    <div class="layout">
+
+      <!-- Tarjeta principal Cámara -->
+      <div class="card">
+        <div class="card-title">
+          Módulo Cámara
+          <span class="status-pill pill-idle" id="cam-pill">Inactivo</span>
+        </div>
+
+        <!-- Vista de cámara -->
+        <div id="cam-wrap">
+          <span class="cam-icon"></span>
+          <span>Presiona "Activar cámara"</span>
+          <video id="cam-feed" autoplay playsinline muted></video>
+        </div>
+
+        <!-- Canvas oculto para capturas -->
+        <canvas id="snap-canvas"></canvas>
+
+        <!-- Preview de foto capturada -->
+        <img id="snap-preview" alt="Foto capturada" />
+
+        <!-- Datos -->
+        <div class="data-row">
+          <span class="data-key">Cámara activa</span>
+          <span class="data-val" id="cam-facing">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Resolución</span>
+          <span class="data-val blue" id="cam-res">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Frame rate</span>
+          <span class="data-val" id="cam-fps">—</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Permiso</span>
+          <span class="data-val green" id="cam-perm">—</span>
+        </div>
+
+        <!-- Botones -->
+        <div class="btn-row">
+          <button class="btn btn-green" onclick="toggleCam()" id="btn-cam"> Activar cámara</button>
+          <button class="btn btn-gray"  onclick="flipCam()"   id="btn-flip" disabled> Cambiar</button>
+          <button class="btn btn-blue"  onclick="takeSnap()"  id="btn-snap" disabled> Capturar</button>
+        </div>
+      </div>
+
+      <!-- Log Cámara -->
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Log de eventos</div>
+        <div class="log" id="cam-log">
+          <div class="le">
+            <span class="lt">--:--:--</span>
+            <span class="lm-info">Esperando cámara...</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
+
+</body>
+</html>
